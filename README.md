@@ -1,18 +1,10 @@
-TypeScript Hello World Demo
-===========================
+TypeScript Dayjs Demo
+=====================
+
+dayjs相对于moment的优势是：体积小，不可变
+相对于date-fns的优势是：可链式操作
 
 ```
 npm install
 npm run demo
 ```
-
-Note:
-
-`esModuleInterop` is recommended to set to `true`,
-since we can have consistent importing syntax with babel,
-always use:
-
-```
-import some from 'some'
-```
-
