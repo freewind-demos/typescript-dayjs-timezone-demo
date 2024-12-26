@@ -1,4 +1,4 @@
-import { DatePicker, Space, Table, Typography } from 'antd';
+import { DatePicker, Space, Table } from 'antd';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import React, { useMemo } from 'react';
@@ -6,13 +6,11 @@ import { getColorFromText } from '../utils/colors';
 
 dayjs.extend(utc);
 
-const { Paragraph } = Typography;
-
 interface TimeData {
     key: string;
     type: string;
     code: string;
-    format: string;
+    localFormat: string;
     toString: string;
     toISOString: string;
     utcOffset: number;
@@ -32,6 +30,11 @@ const UtcDemo: React.FC = () => {
         return selectedLocalTime.utc();
     }, [selectedTime]);
 
+    const utcTimeToJsDate = useMemo(() => {
+        if (!utcTime) return null;
+        return new Date('2024-01-02');
+    }, [utcTime]);
+
     const convertedLocalTime = useMemo(() => {
         if (!utcTime) return null;
         return utcTime.local();
@@ -43,14 +46,14 @@ const UtcDemo: React.FC = () => {
     }, [utcTime]);
 
     const timeComparisonData = useMemo(() => {
-        if (!selectedLocalTime || !utcTime || !convertedLocalTime || !utcTimeWithOffset) return [];
+        if (!selectedLocalTime || !utcTime || !convertedLocalTime || !utcTimeWithOffset || !utcTimeToJsDate) return [];
 
         return [
             {
                 key: 'original local',
                 type: 'OriginalLocal Time',
                 code: 'dayjs(selectedTime)',
-                format: selectedLocalTime.format('YYYY-MM-DD HH:mm:ss Z'),
+                localFormat: selectedLocalTime.format('YYYY-MM-DD HH:mm:ss Z'),
                 toString: selectedLocalTime.toString(),
                 toISOString: selectedLocalTime.toISOString(),
                 utcOffset: selectedLocalTime.utcOffset(),
@@ -60,17 +63,27 @@ const UtcDemo: React.FC = () => {
                 key: 'utc',
                 type: 'UTC Time',
                 code: 'dayjs.utc(selectedTime)',
-                format: utcTime.format('YYYY-MM-DD HH:mm:ss Z'),
+                localFormat: utcTime.format('YYYY-MM-DD HH:mm:ss Z'),
                 toString: utcTime.toString(),
                 toISOString: utcTime.toISOString(),
                 utcOffset: utcTime.utcOffset(),
                 isUtc: utcTime.isUTC() ? '是' : '否',
             },
             {
+                key: 'utcTimeToJsDate',
+                type: 'UTC Time to JS Date',
+                code: 'dayjs.utc(selectedTime).toDate()',
+                localFormat: utcTimeToJsDate.toLocaleString(),
+                toString: utcTimeToJsDate.toString(),
+                toISOString: utcTimeToJsDate.toISOString(),
+                utcOffset: utcTimeToJsDate.getTimezoneOffset(),
+                isUtc: '否',
+            },
+            {
                 key: 'converted local',
                 type: 'Converted Local Time',
                 code: 'dayjs(utcTime).local()',
-                format: convertedLocalTime.format('YYYY-MM-DD HH:mm:ss Z'),
+                localFormat: convertedLocalTime.format('YYYY-MM-DD HH:mm:ss Z'),
                 toString: convertedLocalTime.toString(),
                 toISOString: convertedLocalTime.toISOString(),
                 utcOffset: convertedLocalTime.utcOffset(),
@@ -80,7 +93,7 @@ const UtcDemo: React.FC = () => {
                 key: 'utc with offset',
                 type: 'UTC with Offset',
                 code: 'dayjs(utcTime).utcOffset(120)',
-                format: utcTimeWithOffset.format('YYYY-MM-DD HH:mm:ss Z'),
+                localFormat: utcTimeWithOffset.format('YYYY-MM-DD HH:mm:ss Z'),
                 toString: utcTimeWithOffset.toString(),
                 toISOString: utcTimeWithOffset.toISOString(),
                 utcOffset: utcTimeWithOffset.utcOffset(),
@@ -101,12 +114,12 @@ const UtcDemo: React.FC = () => {
             key: 'code',
         },
         {
-            title: `format('YYYY-MM-DD HH:mm:ss Z')`,
-            dataIndex: 'format',
-            key: 'format',
+            title: `local format`,
+            dataIndex: 'localFormat',
+            key: 'localFormat',
             onCell: (record: TimeData) => ({
                 style: {
-                    backgroundColor: getColorFromText(record.format),
+                    backgroundColor: getColorFromText(record.localFormat),
                 }
             })
         },
