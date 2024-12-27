@@ -1,68 +1,52 @@
-# DayJS UTC Plugin Demo
+# DayJS 时区转换演示
 
-这是一个用于演示 Day.js UTC 插件功能的项目。通过可视化的方式展示了 UTC 时间转换、时区操作等功能，帮助开发者更好地理解和使用 Day.js 的 UTC 相关功能。
+## selectedTime.tz 函数说明
 
-## 功能特点
+`selectedTime.tz(timezone, keepLocalTime)` 是 Day.js 时区插件的核心方法，用于处理时区转换。它有两种使用方式：
 
-1. UTC 插件方法展示
-   - 完整展示了所有静态方法和实例方法
-   - 包含详细的使用说明和示例代码
+1. **仅转换时区显示（默认模式）**
+   - 调用方式：`selectedTime.tz(timezone)`
+   - 特点：保持 UTC 时间不变，仅改变时区显示
+   - 示例：
+     ```javascript
+     // 当前时区：Asia/Shanghai
+     // UTC: 2024-12-27T12:04:33.323Z
+     const selectedTime = dayjs('2024-12-27 20:04:33');
+     
+     // 转换为 America/Phoenix 时区
+     const phoenixTime = selectedTime.tz('America/Phoenix');
+     
+     // 结果：
+     // naive time: 2024-12-27 05:04:33
+     // UTC 偏移: -07:00
+     // UTC 时间: 2024-12-27T12:04:33.323Z
 
-2. 交互式时间转换演示
-   - 可以选择任意时间进行转换
-   - 同时展示本地时间、UTC时间和带偏移量的时间
-   - 通过表格形式展示不同方法的输出结果
+     // UTC不变，naive time变了
+     ```
 
-3. 可视化比较
-   - 使用颜色标记相同的时间表示
-   - 直观展示不同时区时间的关系
-   - 帮助理解时区转换的原理
+2. **保持本地时间不变**
+   - 调用方式：`selectedTime.tz(timezone, true)`
+   - 特点：保持 naive time 不变，改变 UTC 时间
+   - 示例：
+     ```javascript
+     // 当前时区：Asia/Shanghai
+     // // UTC: 2024-12-27T12:04:33.323Z
+     const selectedTime = dayjs('2024-12-27 20:04:33');
+     
+     // 转换为 America/Phoenix 时区，保持本地时间不变
+     const phoenixTime = selectedTime.tz('America/Phoenix', true);
+     
+     // 结果：
+     // naive time: 2024-12-27 20:04:33
+     // UTC 偏移: -07:00
+     // UTC 时间: 2024-12-28T03:04:33.323Z
 
-## 技术要点
+     // naive time不变，UTC变了
+     ```
 
-- 使用 Day.js 的 UTC 插件进行时间处理
-- 基于 HSL 颜色空间的字符串映射算法
-- React + TypeScript + Vite 构建
-- Ant Design 组件库
+## 运行项目
 
-## 安装和运行
-
-1. 安装依赖：
 ```bash
-pnpm install
+npm install
+npm start
 ```
-
-2. 启动开发服务器：
-```bash
-pnpm start
-```
-
-## 使用说明
-
-1. 查看 UTC 插件提供的所有方法及其说明
-2. 使用日期选择器选择一个时间
-3. 观察表格中展示的不同时间表示：
-   - Original Local Time: 原始的本地时间
-   - UTC Time: 转换后的 UTC 时间
-   - Converted Local Time: UTC 时间转回本地时间
-   - UTC with Offset: 设置了指定偏移量的 UTC 时间
-
-4. 通过颜色标记观察：
-   - 相同的时间表示会使用相同的背景色
-   - 不同的时间表示会使用不同的背景色
-   - 这有助于理解不同方法返回的时间表示之间的关系
-
-## 关键概念
-
-1. UTC 时间
-   - 协调世界时（Coordinated Universal Time）
-   - 不受时区影响的标准时间
-
-2. 时区偏移
-   - 本地时间与 UTC 的偏移量
-   - 使用分钟表示，如 +480 表示 UTC+8
-
-3. 时间转换
-   - local() 方法：将 UTC 时间转换为本地时间
-   - utc() 方法：将时间转换为 UTC 模式
-   - utcOffset() 方法：设置指定的 UTC 偏移量
